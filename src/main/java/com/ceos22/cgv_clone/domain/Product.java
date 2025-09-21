@@ -26,4 +26,9 @@ public class Product {
 
     @Column(length = 50)
     private String category;  // 팝콘/음료/스낵
+
+    @ManyToOne
+    @JoinColumn(name = "orderitem_id")
+    private Product orderItem;
+
 }
