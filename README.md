@@ -13,7 +13,7 @@ CEOS 22기 백엔드 스터디 - CGV 클론 코딩 프로젝트
 
 - ### Theater
 
-  <img width="385" height="342" alt="Image" src="https://github.com/user-attachments/assets/9ec66c01-b942-4663-893c-d1bdea727c9b" />
+  <img width="895" height="571" alt="Image" src="https://github.com/user-attachments/assets/30426e7a-6bd7-48ea-a5fa-3b52799253be" />
 
   Theater(영화관) 1:N Screen(상영관) 1:N Showtime(상영 시간표)
 
