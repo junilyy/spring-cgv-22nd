@@ -3,6 +3,49 @@ CEOS 22기 백엔드 스터디 - CGV 클론 코딩 프로젝트
 
 ---
 
+## 2주차 추가 조사
+
+1. data jpa를 찾다보면 SimpleJpaRepository에서  entity manager를 생성자 주입을 통해서 주입 받는다. 근데 싱글톤 객체는 한번만 할당을  받는데, 한번 연결 때 마다 생성이 되는 entity manager를 생성자 주입을 통해서 받는 것은 수상하지 않는가? 어떻게 되는 것일까? 한번 알아보자
+
+   Spring은 실제 `EntityManager` 객체를 직접 주입하는게 아니라 `EntityManager Proxy`를 주입. 이 프록시는 현재 트랜잭션에 맞는 실제 `EntityManager`를 찾아서 위임. 따라서 Repository는 싱글톤이면서도, 매 요청마다 올바른 `EntityManager`를 사용할 수 있음.
+2. fetch join 할 때 distinct를 안하면 생길 수 있는 문제
+
+   OneToMany 관계에서 Fetch Join을 쓰면, 엔티티가 중복되어 조회되는 문제가 발생한다.
+
+   ex) Team-Member 관계에서, 팀에 속한 멤버가 여러명일 때 Fetch Join하면 같은 Team 객체가 중복 발생. (아래는 TeamA에 속한 멤버가 2명, TeamB에 속한 멤버가 1명인 경우)
+   ```java
+    String queryA = "select t from Team t join fetch t.members";
+    List<Team> resultListA = em.createQuery(queryA, Team.class)
+            .getResultList();
+    for (Team team : resultListA) {
+        System.out.println("team.getName() = " + team.getName() +
+                ", team.getMembers().size() = " + team.getMembers().size());
+    }
+
+    String queryB = "select distinct t from Team t join fetch t.members";
+    List<Team> resultListB = em.createQuery(queryB, Team.class)
+            .getResultList();
+    for (Team team : resultListB) {
+        System.out.println("team.getName() = " + team.getName() +
+                ", team.getMembers().size() = " + team.getMembers().size());
+    }
+   ```
+
+   ### queryA 실행 시 결과:
+
+   team.getName() = TeamA, team.getMembers().size() = 2
+
+   team.getName() = TeamA, team.getMembers().size() = 2
+
+   team.getName() = TeamB, team.getMembers().size() = 1
+
+   ### queryB 실행 시 결과:
+
+   team.getName() = TeamA, team.getMembers().size() = 2
+
+   team.getName() = TeamB, team.getMembers().size() = 1
+
+
 ## ERD
 <img width="972" height="653" alt="Image" src="https://github.com/user-attachments/assets/d9d5b112-f6b5-4f02-ab72-59f028b296c6" />
 
