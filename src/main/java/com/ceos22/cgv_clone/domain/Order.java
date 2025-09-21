@@ -10,28 +10,22 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Ticket {
+@Table(name = "orders")
+public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ticket_id")
+    @Column(name = "order_id")
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "showtime_id")
-    private Showtime showtime;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "general_cnt")
-    private int generalCnt;
+    @ManyToOne
+    @JoinColumn(name = "theater_id")
+    private Theater theater;
 
-    @Column(name = "youth_cnt")
-    private int youthCnt;
-
-    @Column(name = "final_price")
-    private int finalPrice;
+    private int totalPrice;
 
     private LocalDateTime createdAt;
 }

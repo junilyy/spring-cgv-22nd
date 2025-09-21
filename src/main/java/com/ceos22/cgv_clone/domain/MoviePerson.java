@@ -14,7 +14,7 @@ public class MoviePerson {
     @Column(name = "person_id")
     private Long id;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 50)
     private String name;
 
     // 감독 or 배우

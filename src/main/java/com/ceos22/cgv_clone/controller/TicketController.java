@@ -13,14 +13,16 @@ public class TicketController {
 
     private final TicketService ticketService;
 
+    // 예매하기
     @PostMapping("/reserve")
-    public ResponseEntity<TicketResponseDto> reserve(@RequestBody TicketRequestDto request) {
-        return ResponseEntity.ok(ticketService.reserveTicket(request));
+    public TicketResponseDto reserveTicket(@RequestBody TicketRequestDto request) {
+        return ticketService.reserveTicket(request);
     }
 
+    // 예매 취소하기
     @DeleteMapping("/cancel/{ticketId}")
-    public ResponseEntity<String> cancel(@PathVariable Long ticketId) {
+    public String cancelTicket(@PathVariable Long ticketId) {
         ticketService.cancelTicket(ticketId);
-        return ResponseEntity.ok("예매가 취소되었습니다.");
+        return "예매가 취소되었습니다.";
     }
 }

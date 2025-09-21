@@ -19,7 +19,7 @@ public class Movie {
     @Column(length = 50)
     private String title;
 
-    @Column(name = "release_date", length = 20)
+    @Column(name = "release_date", length = 50)
     private LocalDateTime releaseDate;
 
     private int runtime;
@@ -39,7 +39,8 @@ public class Movie {
     @Column(columnDefinition = "TEXT")
     private String prologue;
 
-    @Column(name = "age_limit", length = 20)
-    private String ageLimit;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "age_limit", length = 50)
+    private AgeRating ageRating;
 
 }

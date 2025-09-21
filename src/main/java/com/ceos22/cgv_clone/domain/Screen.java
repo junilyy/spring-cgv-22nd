@@ -19,7 +19,7 @@ public class Screen {
     @Column(nullable = false, length = 50)
     private String name;
 
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, length = 50)
     private String type; // 일반관/특별관
 
     @Column(name = "total_seats", nullable = false)

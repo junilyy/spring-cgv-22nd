@@ -25,4 +25,7 @@ public class Theater {
 
     @Column(name = "parking_info", length = 1000)
     private String parkingInfo;
+
+    @Column(nullable = false, length = 50)
+    private String region;
 }

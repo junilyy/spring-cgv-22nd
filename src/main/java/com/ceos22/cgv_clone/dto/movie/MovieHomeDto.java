@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public class MovieHomeDto {
     private Long movieId;
     private String title;
-    private String ageLimit;
+    private String ageRating;
     private Double bookingRate;
     private LocalDateTime releaseDate;
     private Long totalAudience;

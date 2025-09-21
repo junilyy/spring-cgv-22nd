@@ -11,7 +11,7 @@ import java.util.List;
 public class MovieDetailDto {
     private Long movieId;
     private String title;
-    private String ageLimit;
+    private String ageRating;
     private LocalDateTime releaseDate;
     private int runtime;
     private String genre;

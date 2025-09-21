@@ -16,7 +16,7 @@ public class Event {
     @Column(name = "event_id")
     private Long id;
 
-    @Column(nullable = false, length = 200)
+    @Column(nullable = false, length = 100)
     private String title;
 
     @Column(columnDefinition = "TEXT")
