@@ -8,10 +8,7 @@ import lombok.*;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 public class ReservationSeat extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,5 +31,21 @@ public class ReservationSeat extends BaseEntity {
     @Column(length = 50, nullable = false)
     private ReservationStatus status; // RESERVED / AVAILABLE
 
+    @Builder
+    public ReservationSeat(Showtime showtime, Seat seat, Ticket ticket, ReservationStatus status) {
+        this.showtime = showtime;
+        this.seat = seat;
+        this.ticket = ticket;
+        this.status = status;
+    }
+
+    //예약 상태 변경을 위한 메서드
+    public void cancel(){
+        this.status = ReservationStatus.AVAILABLE;
+    }
+
+    public void reserve(){
+        this.status = ReservationStatus.RESERVED;
+    }
 
 }

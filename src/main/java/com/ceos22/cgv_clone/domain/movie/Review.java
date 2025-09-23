@@ -1,5 +1,6 @@
 package com.ceos22.cgv_clone.domain.movie;
 
+import com.ceos22.cgv_clone.domain.BaseEntity;
 import com.ceos22.cgv_clone.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,9 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
-public class Review {
+public class Review extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_id")
@@ -22,15 +21,8 @@ public class Review {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    @Column(name = "ratng", nullable = false)
     private Integer rating;
-
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -39,4 +31,12 @@ public class Review {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "movie_id", nullable = false)
     private Movie movie;
+
+    @Builder
+    private Review(String content, Integer rating, User user, Movie movie) {
+        this.content = content;
+        this.rating = rating;
+        this.user = user;
+        this.movie = movie;
+    }
 }

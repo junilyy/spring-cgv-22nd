@@ -8,8 +8,6 @@ import lombok.*;
 @Table(name = "screen")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 public class Screen extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,4 +24,11 @@ public class Screen extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "theater_id", nullable = false)
     private Theater theater;
+
+    @Builder
+    public Screen(String name, String type, Theater theater) {
+        this.name = name;
+        this.type = type;
+        this.theater = theater;
+    }
 }

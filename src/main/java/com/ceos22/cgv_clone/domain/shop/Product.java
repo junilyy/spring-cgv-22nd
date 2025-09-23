@@ -8,8 +8,6 @@ import lombok.*;
 @Table(name = "product")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 public class Product extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,4 +28,12 @@ public class Product extends BaseEntity {
     @Column(length = 50)
     private String category;  // 팝콘/음료/스낵
 
+    @Builder
+    public Product(String name, String description, int price, String imageUrl, String category) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.imageUrl = imageUrl;
+        this.category = category;
+    }
 }

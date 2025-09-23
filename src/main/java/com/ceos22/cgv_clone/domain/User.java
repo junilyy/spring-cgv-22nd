@@ -6,8 +6,7 @@ import lombok.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
+
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,4 +18,10 @@ public class User {
 
     @Column(nullable = false, length = 50)
     private String password;
+
+    @Builder
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
 }

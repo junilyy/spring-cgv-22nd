@@ -10,8 +10,6 @@ import java.time.LocalDateTime;
 @Table(name = "movie")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 public class Movie extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,5 +36,16 @@ public class Movie extends BaseEntity {
 
     @Column(name = "image_url", length = 500)
     private String imageUrl;
+
+    @Builder
+    private Movie(String title, LocalDateTime releaseDate, int runtime, String genre, String prologue, AgeRating ageRating, String imageUrl) {
+        this.title = title;
+        this.releaseDate = releaseDate;
+        this.runtime = runtime;
+        this.genre = genre;
+        this.prologue = prologue;
+        this.ageRating = ageRating;
+        this.imageUrl = imageUrl;
+    }
 
 }

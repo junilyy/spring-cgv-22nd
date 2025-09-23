@@ -12,8 +12,6 @@ import java.time.LocalDateTime;
 @Table(name = "showtime")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 public class Showtime extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,5 +35,12 @@ public class Showtime extends BaseEntity {
     @Column(name = "end_time", nullable = false)
     private LocalDateTime endTime;
 
-
+    @Builder
+    public Showtime(Screen screen, Movie movie, LocalDate date, LocalDateTime startTime, LocalDateTime endTime) {
+        this.screen = screen;
+        this.movie = movie;
+        this.date = date;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
 }

@@ -11,8 +11,6 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 public class Ticket extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,5 +34,14 @@ public class Ticket extends BaseEntity {
 
     @Column(name = "final_price")
     private int finalPrice;
+
+    @Builder
+    public Ticket(Showtime showtime, User user, int generalCnt, int youthCnt, int finalPrice) {
+        this.showtime = showtime;
+        this.user = user;
+        this.generalCnt = generalCnt;
+        this.youthCnt = youthCnt;
+        this.finalPrice = finalPrice;
+    }
 }
 

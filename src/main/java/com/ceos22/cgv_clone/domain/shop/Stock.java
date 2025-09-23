@@ -9,8 +9,6 @@ import lombok.*;
 @Table(name = "stock")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 public class Stock extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,4 +25,11 @@ public class Stock extends BaseEntity {
 
     @Column(name = "stock", nullable = false)
     private int stock;
+
+    @Builder
+    public Stock(Product product, Theater theater, int stock) {
+        this.product = product;
+        this.theater = theater;
+        this.stock = stock;
+    }
 }

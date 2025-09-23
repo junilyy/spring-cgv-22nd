@@ -8,8 +8,6 @@ import lombok.*;
 @Table(name = "theater")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 public class Theater extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,4 +29,13 @@ public class Theater extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
     private String region; // 서울/경기/...
+
+    @Builder
+    public Theater(String name, String address, String accessInfo, String parkingInfo, String region) {
+        this.name = name;
+        this.address = address;
+        this.accessInfo = accessInfo;
+        this.parkingInfo = parkingInfo;
+        this.region = region;
+    }
 }

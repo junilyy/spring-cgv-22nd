@@ -8,8 +8,6 @@ import lombok.*;
 @Table(name = "seat")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 public class Seat extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,4 +23,11 @@ public class Seat extends BaseEntity {
 
     @Column(length = 50)
     private String seat_col; // ex) 1, 2
+
+    @Builder
+    public Seat(Screen screen, String seat_row, String seat_col) {
+        this.screen = screen;
+        this.seat_row = seat_row;
+        this.seat_col = seat_col;
+    }
 }
