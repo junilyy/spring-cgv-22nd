@@ -1,6 +1,6 @@
 package com.ceos22.cgv_clone.controller;
 
-import com.ceos22.cgv_clone.domain.Theater;
+import com.ceos22.cgv_clone.domain.theater.Theater;
 import com.ceos22.cgv_clone.service.TheaterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

@@ -1,6 +1,9 @@
 package com.ceos22.cgv_clone.service;
 
-import com.ceos22.cgv_clone.domain.*;
+import com.ceos22.cgv_clone.domain.movie.Movie;
+import com.ceos22.cgv_clone.domain.movie.Review;
+import com.ceos22.cgv_clone.domain.theater.Showtime;
+import com.ceos22.cgv_clone.domain.theater.Theater;
 import com.ceos22.cgv_clone.dto.movie.*;
 import com.ceos22.cgv_clone.repository.*;
 import lombok.RequiredArgsConstructor;

@@ -1,14 +1,16 @@
-package com.ceos22.cgv_clone.domain;
+package com.ceos22.cgv_clone.domain.theater;
 
+import com.ceos22.cgv_clone.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@Table(name = "seat")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Seat {
+public class Seat extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "seat_id")

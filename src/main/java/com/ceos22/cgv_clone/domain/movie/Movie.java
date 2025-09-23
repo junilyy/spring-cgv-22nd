@@ -1,16 +1,18 @@
-package com.ceos22.cgv_clone.domain;
+package com.ceos22.cgv_clone.domain.movie;
 
+import com.ceos22.cgv_clone.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "movie")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Movie {
+public class Movie extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "movie_id")
@@ -27,20 +29,14 @@ public class Movie {
     @Column(length = 50)
     private String genre;
 
-    @Column(name = "booking_rate")
-    private Double bookingRate;
-
-    @Column(name = "total_audience")
-    private Long totalAudience;
-
-    @Column(name = "egg_num")
-    private Double eggNum;
-
     @Column(columnDefinition = "TEXT")
     private String prologue;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "age_limit", length = 50)
     private AgeRating ageRating;
+
+    @Column(name = "image_url", length = 500)
+    private String imageUrl;
 
 }

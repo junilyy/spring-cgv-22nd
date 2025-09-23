@@ -1,6 +1,6 @@
 package com.ceos22.cgv_clone.controller;
 
-import com.ceos22.cgv_clone.domain.Theater;
+import com.ceos22.cgv_clone.domain.theater.Theater;
 import com.ceos22.cgv_clone.dto.movie.MovieHomeDto;
 import com.ceos22.cgv_clone.dto.movie.MovieDetailDto;
 import com.ceos22.cgv_clone.dto.movie.ShowtimeResponseDto;

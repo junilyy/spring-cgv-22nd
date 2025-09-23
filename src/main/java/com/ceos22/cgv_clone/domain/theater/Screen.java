@@ -1,15 +1,16 @@
-package com.ceos22.cgv_clone.domain;
+package com.ceos22.cgv_clone.domain.theater;
 
+import com.ceos22.cgv_clone.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@Table(name = "screen")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Screen {
-
+public class Screen extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "screen_id")
@@ -21,9 +22,6 @@ public class Screen {
 
     @Column(nullable = false, length = 50)
     private String type; // 일반관/특별관
-
-    @Column(name = "total_seats", nullable = false)
-    private Integer totalSeats;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "theater_id", nullable = false)

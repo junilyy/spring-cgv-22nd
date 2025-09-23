@@ -1,4 +1,4 @@
-package com.ceos22.cgv_clone.domain;
+package com.ceos22.cgv_clone.domain.movie;
 
 public enum AgeRating {
     ALL,        // 전체 관람가

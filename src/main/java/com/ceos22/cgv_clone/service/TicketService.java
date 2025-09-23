@@ -1,6 +1,12 @@
 package com.ceos22.cgv_clone.service;
 
 import com.ceos22.cgv_clone.domain.*;
+import com.ceos22.cgv_clone.domain.reservation.ReservationSeat;
+import com.ceos22.cgv_clone.domain.reservation.ReservationStatus;
+import com.ceos22.cgv_clone.domain.reservation.Ticket;
+import com.ceos22.cgv_clone.domain.reservation.TicketPrice;
+import com.ceos22.cgv_clone.domain.theater.Seat;
+import com.ceos22.cgv_clone.domain.theater.Showtime;
 import com.ceos22.cgv_clone.dto.ticket.*;
 import com.ceos22.cgv_clone.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +27,6 @@ public class TicketService {
     private final SeatRepository seatRepository;
     private final ReservationSeatRepository reservationSeatRepository;
 
-    // 티켓 가격 하드코딩
-    private static final int GENERAL_PRICE = 12000;
-    private static final int YOUTH_PRICE = 10000;
 
     // 예매
     @Transactional
@@ -35,8 +38,8 @@ public class TicketService {
                 .orElseThrow(() -> new IllegalArgumentException("유저 없음"));
 
         // 최종 결제 금액 계산
-        int finalPrice = request.getGeneralCount() * GENERAL_PRICE
-                + request.getYouthCount() * YOUTH_PRICE;
+        int finalPrice = request.getGeneralCount() * TicketPrice.GENERAL.getPrice()
+                + request.getYouthCount() * TicketPrice.YOUTH.getPrice();
 
         // Ticket 생성
         Ticket ticket = Ticket.builder()

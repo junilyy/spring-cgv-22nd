@@ -1,6 +1,6 @@
 package com.ceos22.cgv_clone.service;
 
-import com.ceos22.cgv_clone.domain.Theater;
+import com.ceos22.cgv_clone.domain.theater.Theater;
 import com.ceos22.cgv_clone.repository.TheaterRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

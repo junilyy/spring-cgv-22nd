@@ -1,6 +1,6 @@
 package com.ceos22.cgv_clone.repository;
 
-import com.ceos22.cgv_clone.domain.Theater;
+import com.ceos22.cgv_clone.domain.theater.Theater;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

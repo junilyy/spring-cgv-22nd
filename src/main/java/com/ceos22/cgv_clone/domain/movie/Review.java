@@ -1,5 +1,6 @@
-package com.ceos22.cgv_clone.domain;
+package com.ceos22.cgv_clone.domain.movie;
 
+import com.ceos22.cgv_clone.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;

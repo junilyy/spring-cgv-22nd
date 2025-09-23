@@ -1,5 +1,8 @@
-package com.ceos22.cgv_clone.domain;
+package com.ceos22.cgv_clone.domain.reservation;
 
+import com.ceos22.cgv_clone.domain.BaseEntity;
+import com.ceos22.cgv_clone.domain.User;
+import com.ceos22.cgv_clone.domain.theater.Showtime;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,17 +13,18 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Ticket {
+public class Ticket extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ticket_id")
     private Long id;
 
-    @ManyToOne
+    // 정규화 측면에서는 불필요하나, 서비스 로직 간편화 측면에서 이용. (showtime 정보를 ticket.getShotime()으로 접근 가능)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "showtime_id")
     private Showtime showtime;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -32,7 +36,5 @@ public class Ticket {
 
     @Column(name = "final_price")
     private int finalPrice;
-
-    private LocalDateTime createdAt;
 }
 

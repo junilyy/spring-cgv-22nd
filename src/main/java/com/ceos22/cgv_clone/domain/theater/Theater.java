@@ -1,14 +1,16 @@
-package com.ceos22.cgv_clone.domain;
+package com.ceos22.cgv_clone.domain.theater;
 
+import com.ceos22.cgv_clone.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@Table(name = "theater")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Theater {
+public class Theater extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "theater_id")
@@ -20,12 +22,13 @@ public class Theater {
     @Column(nullable = false, length = 255)
     private String address;
 
-    @Column(name = "access_info", length = 1000)
+    @Column(columnDefinition = "TEXT")
     private String accessInfo;
 
-    @Column(name = "parking_info", length = 1000)
+    @Column(columnDefinition = "TEXT")
     private String parkingInfo;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
-    private String region;
+    private String region; // 서울/경기/...
 }

@@ -1,6 +1,9 @@
 package com.ceos22.cgv_clone.service;
 
-import com.ceos22.cgv_clone.domain.*;
+import com.ceos22.cgv_clone.domain.reservation.ReservationStatus;
+import com.ceos22.cgv_clone.domain.theater.Screen;
+import com.ceos22.cgv_clone.domain.theater.Seat;
+import com.ceos22.cgv_clone.domain.theater.Showtime;
 import com.ceos22.cgv_clone.dto.ticket.*;
 import com.ceos22.cgv_clone.repository.*;
 import lombok.RequiredArgsConstructor;
