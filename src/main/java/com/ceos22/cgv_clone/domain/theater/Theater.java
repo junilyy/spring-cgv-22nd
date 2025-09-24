@@ -28,10 +28,10 @@ public class Theater extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
-    private String region; // 서울/경기/...
+    private TheaterRegion region; // 서울/경기/...
 
     @Builder
-    public Theater(String name, String address, String accessInfo, String parkingInfo, String region) {
+    public Theater(String name, String address, String accessInfo, String parkingInfo, TheaterRegion region) {
         this.name = name;
         this.address = address;
         this.accessInfo = accessInfo;

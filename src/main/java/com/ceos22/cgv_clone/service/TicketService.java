@@ -5,7 +5,6 @@ import com.ceos22.cgv_clone.domain.reservation.ReservationSeat;
 import com.ceos22.cgv_clone.domain.reservation.ReservationStatus;
 import com.ceos22.cgv_clone.domain.reservation.Ticket;
 import com.ceos22.cgv_clone.domain.reservation.TicketPrice;
-import com.ceos22.cgv_clone.domain.theater.Seat;
 import com.ceos22.cgv_clone.domain.theater.Showtime;
 import com.ceos22.cgv_clone.dto.ticket.*;
 import com.ceos22.cgv_clone.repository.*;

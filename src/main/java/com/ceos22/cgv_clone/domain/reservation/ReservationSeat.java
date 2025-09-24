@@ -1,7 +1,7 @@
 package com.ceos22.cgv_clone.domain.reservation;
 
 import com.ceos22.cgv_clone.domain.BaseEntity;
-import com.ceos22.cgv_clone.domain.theater.Seat;
+import com.ceos22.cgv_clone.domain.theater.Screen;
 import com.ceos22.cgv_clone.domain.theater.Showtime;
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,22 +20,30 @@ public class ReservationSeat extends BaseEntity {
     private Showtime showtime;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "seat_id")
-    private Seat seat;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ticket_id")
     private Ticket ticket;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "screen_id")
+    private Screen screen;
+
+    @Column(name = "seat_row", length = 5, nullable = false)
+    private String seatRow; // 좌석 열의 개수
+
+    @Column(name = "seat_col", length = 5, nullable = false)
+    private String seatCol; // 좌석 행의 개수
 
     @Enumerated(EnumType.STRING)
     @Column(length = 50, nullable = false)
     private ReservationStatus status; // RESERVED / AVAILABLE
 
     @Builder
-    public ReservationSeat(Showtime showtime, Seat seat, Ticket ticket, ReservationStatus status) {
+    public ReservationSeat(Showtime showtime, Ticket ticket, Screen screen, String seatRow, String seatCol, ReservationStatus status) {
         this.showtime = showtime;
-        this.seat = seat;
         this.ticket = ticket;
+        this.screen = screen;
+        this.seatRow = seatRow;
+        this.seatCol = seatCol;
         this.status = status;
     }
 

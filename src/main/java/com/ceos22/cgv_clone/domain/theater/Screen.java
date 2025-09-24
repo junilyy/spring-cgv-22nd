@@ -21,14 +21,22 @@ public class Screen extends BaseEntity {
     @Column(nullable = false, length = 50)
     private String type; // 일반관/특별관
 
+    @Column(name = "total_row")
+    private int totalRow; // 좌석 열의 개수
+
+    @Column(name = "total_col")
+    private int totalCol; // 좌석 행의 개수
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "theater_id", nullable = false)
     private Theater theater;
 
     @Builder
-    public Screen(String name, String type, Theater theater) {
+    public Screen(String name, String type, int total_row, int total_col, Theater theater) {
         this.name = name;
         this.type = type;
+        this.totalRow = total_row;
+        this.totalCol = total_col;
         this.theater = theater;
     }
 }
