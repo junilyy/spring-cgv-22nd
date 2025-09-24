@@ -23,7 +23,7 @@ public class TheaterService {
     // 단건 극장 조회
     public TheaterResponseDto getTheaterById(Long theaterId) {
         Theater theater = theaterRepository.findById(theaterId)
-                .orElseThrow(() -> new IllegalArgumentException("극장을 찾을 수 없음"));
+                .orElseThrow(() -> new IllegalArgumentException("영화관을 찾을 수 없음"));
 
         return TheaterResponseDto.fromEntity(theater);
     }

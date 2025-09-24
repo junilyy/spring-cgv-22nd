@@ -1,6 +1,7 @@
 package com.ceos22.cgv_clone.controller;
 
-import com.ceos22.cgv_clone.dto.ticket.*;
+import com.ceos22.cgv_clone.dto.request.TicketRequestDto;
+import com.ceos22.cgv_clone.dto.response.TicketResponseDto;
 import com.ceos22.cgv_clone.service.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
