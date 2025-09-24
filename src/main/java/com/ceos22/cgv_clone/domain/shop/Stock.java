@@ -8,6 +8,7 @@ import lombok.*;
 @Entity
 @Table(name = "stock")
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Stock extends BaseEntity {
     @Id

@@ -29,10 +29,10 @@ public class ReservationSeat extends BaseEntity {
     private Screen screen;
 
     @Column(name = "seat_row", length = 5, nullable = false)
-    private String seatRow; // 좌석 열의 개수
+    private String seatRow;
 
     @Column(name = "seat_col", length = 5, nullable = false)
-    private String seatCol; // 좌석 행의 개수
+    private String seatCol;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 50, nullable = false)

@@ -9,6 +9,7 @@ import lombok.*;
 @Entity
 @Table(name = "orders")
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Order extends BaseEntity {
     @Id

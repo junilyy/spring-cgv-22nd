@@ -22,10 +22,10 @@ public class Screen extends BaseEntity {
     private String type; // 일반관/특별관
 
     @Column(name = "total_row")
-    private int totalRow; // 좌석 열의 개수
+    private int totalRow; // 좌석 행의 개수
 
     @Column(name = "total_col")
-    private int totalCol; // 좌석 행의 개수
+    private int totalCol; // 좌석 열의 개수
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "theater_id", nullable = false)
