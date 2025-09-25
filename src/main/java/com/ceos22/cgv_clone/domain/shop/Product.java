@@ -26,11 +26,12 @@ public class Product extends BaseEntity {
     @Column(length = 500)
     private String imageUrl;
 
+    @Enumerated(EnumType.STRING)
     @Column(length = 50)
-    private String category;  // 팝콘/음료/스낵
+    private ProductCategory category;  // 팝콘/음료/스낵
 
     @Builder
-    public Product(String name, String description, int price, String imageUrl, String category) {
+    public Product(String name, String description, int price, String imageUrl, ProductCategory category) {
         this.name = name;
         this.description = description;
         this.price = price;
