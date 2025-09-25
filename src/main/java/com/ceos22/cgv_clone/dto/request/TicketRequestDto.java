@@ -9,7 +9,6 @@ import java.util.List;
 @NoArgsConstructor
 public class TicketRequestDto {
     private Long showtimeId;
-    private Long userId;
     private int generalCount;
     private int youthCount;
     private List<String> seatNumbers;

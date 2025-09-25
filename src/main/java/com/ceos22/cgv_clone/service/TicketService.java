@@ -26,13 +26,13 @@ public class TicketService {
 
     // 예매
     @Transactional
-    public TicketResponseDto reserveTicket(TicketRequestDto request) {
+    public TicketResponseDto reserveTicket(String username, TicketRequestDto request) {
 
         // showtime, user 가져오기
         Showtime showtime = showtimeRepository.findById(request.getShowtimeId())
                 .orElseThrow(()-> new IllegalArgumentException("상영시간표 없음"));
 
-        User user = userRepository.findById(request.getUserId())
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("유저 없음"));
 
         // 최종 결제 금액 계산
@@ -91,9 +91,16 @@ public class TicketService {
 
     // 예매 취소
     @Transactional
-    public void cancelTicket(Long ticketId) {
+    public void cancelTicket(String username, Long ticketId) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new IllegalArgumentException("티켓 없음"));
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("유저 없음"));
+
+        if (!ticket.getUser().getId().equals(user.getId())) {
+            throw new SecurityException("본인이 예매한 티켓만 취소할 수 있습니다.");
+        }
 
         // 티켓과 연결된 좌석 삭제
         reservationSeatRepository.deleteByTicket_Id(ticket.getId());

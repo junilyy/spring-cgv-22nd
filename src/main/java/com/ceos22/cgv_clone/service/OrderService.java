@@ -29,8 +29,8 @@ public class OrderService {
 
     // 주문 생성
     @Transactional
-    public OrderResponseDto createOrder(OrderRequestDto request) {
-        User user = userRepository.findById(request.getUserId())
+    public OrderResponseDto createOrder(String username, OrderRequestDto request) {
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("유저 없음"));
 
         Theater theater = theaterRepository.findById(request.getTheaterId())
@@ -85,9 +85,13 @@ public class OrderService {
 
     //주문 조회
     @Transactional(readOnly = true)
-    public OrderResponseDto getOrder(Long orderId) {
+    public OrderResponseDto getOrder(String username, Long orderId) {
         Order order = ordersRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("주문 없음"));
+
+        if (!order.getUser().getUsername().equals(username)) {
+            throw new SecurityException("본인의 주문만 조회할 수 있습니다.");
+        }
 
         List<OrderItemResponseDto> items = orderItemRepository.findByOrder_Id(orderId)
                 .stream()

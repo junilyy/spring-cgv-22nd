@@ -8,7 +8,6 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class OrderRequestDto {
-    private Long userId;
     private Long theaterId;
     private List<OrderItemRequestDto> items;
 }
