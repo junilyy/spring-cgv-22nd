@@ -22,7 +22,7 @@ public class AuthService {
     // 회원가입
     public User signup(String username, String password) {
         if (userRepository.findByUsername(username).isPresent()) {
-            throw new RuntimeException("이미 존재하는 사용자입니다.");
+            throw new IllegalStateException("이미 존재하는 사용자입니다.");
         }
         User user = User.create(username, passwordEncoder.encode(password));
         return userRepository.save(user);

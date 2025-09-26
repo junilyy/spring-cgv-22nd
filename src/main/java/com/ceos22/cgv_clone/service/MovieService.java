@@ -25,7 +25,8 @@ public class MovieService {
 
     // 영화 상세 조회
     public MovieResponseDto getMovieById(Long id) {
-        Movie movie = movieRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("영화를 찾을 수 없음"));
+        Movie movie = movieRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("영화를 찾을 수 없음"));
 
         return MovieResponseDto.fromEntity(movie);
     }
