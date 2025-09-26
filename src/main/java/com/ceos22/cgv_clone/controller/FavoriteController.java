@@ -5,10 +5,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 
 @RestController
 @RequestMapping("/favorites")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Bearer Authentication") // JWT 인증 필요
 public class FavoriteController {
 
     private final FavoriteService favoriteService;
