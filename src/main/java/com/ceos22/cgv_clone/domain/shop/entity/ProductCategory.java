@@ -1,4 +1,4 @@
-package com.ceos22.cgv_clone.domain.shop;
+package com.ceos22.cgv_clone.domain.shop.entity;
 
 public enum ProductCategory {
     POPCORN("팝콘"),

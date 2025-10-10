@@ -1,7 +1,6 @@
 package com.ceos22.cgv_clone.domain.shop.entity;
 
 import com.ceos22.cgv_clone.domain.common.entity.BaseEntity;
-import com.ceos22.cgv_clone.domain.shop.ProductCategory;
 import jakarta.persistence.*;
 import lombok.*;
 

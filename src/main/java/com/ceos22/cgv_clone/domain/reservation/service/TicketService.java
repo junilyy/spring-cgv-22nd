@@ -1,10 +1,11 @@
 package com.ceos22.cgv_clone.domain.reservation.service;
 
+import com.ceos22.cgv_clone.domain.reservation.entity.ReservationStatus;
+import com.ceos22.cgv_clone.domain.reservation.entity.TicketPrice;
 import com.ceos22.cgv_clone.domain.reservation.repository.ReservationSeatRepository;
 import com.ceos22.cgv_clone.domain.reservation.repository.TicketRepository;
 import com.ceos22.cgv_clone.domain.theater.repository.ShowtimeRepository;
 import com.ceos22.cgv_clone.domain.user.entity.User;
-import com.ceos22.cgv_clone.domain.reservation.*;
 import com.ceos22.cgv_clone.domain.reservation.entity.ReservationSeat;
 import com.ceos22.cgv_clone.domain.reservation.entity.Ticket;
 import com.ceos22.cgv_clone.domain.theater.entity.Showtime;

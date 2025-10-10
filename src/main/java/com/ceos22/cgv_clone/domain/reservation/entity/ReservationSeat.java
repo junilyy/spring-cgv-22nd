@@ -1,7 +1,6 @@
 package com.ceos22.cgv_clone.domain.reservation.entity;
 
 import com.ceos22.cgv_clone.domain.common.entity.BaseEntity;
-import com.ceos22.cgv_clone.domain.reservation.ReservationStatus;
 import com.ceos22.cgv_clone.domain.theater.entity.Screen;
 import com.ceos22.cgv_clone.domain.theater.entity.Showtime;
 import jakarta.persistence.*;

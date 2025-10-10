@@ -9,23 +9,22 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/movies")
 @RequiredArgsConstructor
 public class MovieController {
     private final MovieService movieService;
 
-    @GetMapping
+    @GetMapping("/movies")
     public List<MovieResponseDto> getAllMovies() {
         return movieService.getAllMovies();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/movies/{id}")
     public MovieResponseDto getMovieById(@PathVariable Long id) {
         return movieService.getMovieById(id);
     }
 
     // 영화 + 극장 상영 시간표 조회
-    @GetMapping("/{movieId}/theaters/{theaterId}/showtimes")
+    @GetMapping("/movies/{movieId}/theaters/{theaterId}/showtimes")
     public List<ShowtimeResponseDto> getShowtimes(@PathVariable Long movieId, @PathVariable Long theaterId) {
         return movieService.getShowtimesByMovieAndTheater(movieId, theaterId);
     }

@@ -1,6 +1,6 @@
 package com.ceos22.cgv_clone.domain.movie.dto.response;
 
-import com.ceos22.cgv_clone.domain.movie.*;
+import com.ceos22.cgv_clone.domain.movie.entity.AgeRating;
 import com.ceos22.cgv_clone.domain.movie.entity.Movie;
 import lombok.*;
 

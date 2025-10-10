@@ -6,14 +6,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/showtimes")
 @RequiredArgsConstructor
 public class SeatController {
 
     private final SeatService seatService;
 
     // 특정 상영시간표의 예약 좌석 조회
-    @GetMapping("/{showtimeId}/seats")
+    @GetMapping("/showtimes/{showtimeId}/seats")
     public SeatResponseDto getSeats(@PathVariable Long showtimeId) {
         return seatService.getSeatsByShowtime(showtimeId);
     }

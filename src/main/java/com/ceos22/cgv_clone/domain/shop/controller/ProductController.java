@@ -11,18 +11,17 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/products")
 @RequiredArgsConstructor
 public class ProductController {
 
     private final ProductService productService;
 
-    @GetMapping
+    @GetMapping("/products")
     public List<ProductResponseDto> getAllProducts() {
         return productService.getAllProducts();
     }
 
-    @GetMapping("/{productId}")
+    @GetMapping("/products/{productId}")
     public ProductResponseDto getProductById(@PathVariable Long productId) {
         return productService.getProductById(productId);
     }

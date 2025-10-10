@@ -1,4 +1,4 @@
-package com.ceos22.cgv_clone.domain.reservation;
+package com.ceos22.cgv_clone.domain.reservation.entity;
 
 public enum TicketPrice {
     GENERAL(12000),

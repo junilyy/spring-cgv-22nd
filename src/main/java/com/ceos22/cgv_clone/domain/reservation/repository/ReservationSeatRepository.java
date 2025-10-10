@@ -1,7 +1,7 @@
 package com.ceos22.cgv_clone.domain.reservation.repository;
 
 import com.ceos22.cgv_clone.domain.reservation.entity.ReservationSeat;
-import com.ceos22.cgv_clone.domain.reservation.ReservationStatus;
+import com.ceos22.cgv_clone.domain.reservation.entity.ReservationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

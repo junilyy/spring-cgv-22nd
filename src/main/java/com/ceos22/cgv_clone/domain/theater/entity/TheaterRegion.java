@@ -1,4 +1,4 @@
-package com.ceos22.cgv_clone.domain.theater;
+package com.ceos22.cgv_clone.domain.theater.entity;
 
 public enum TheaterRegion {
     SEOUL("서울"),

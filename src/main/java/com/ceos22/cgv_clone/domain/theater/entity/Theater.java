@@ -1,7 +1,6 @@
 package com.ceos22.cgv_clone.domain.theater.entity;
 
 import com.ceos22.cgv_clone.domain.common.entity.BaseEntity;
-import com.ceos22.cgv_clone.domain.theater.TheaterRegion;
 import jakarta.persistence.*;
 import lombok.*;
 

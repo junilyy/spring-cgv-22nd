@@ -1,6 +1,6 @@
 package com.ceos22.cgv_clone.domain.reservation.service;
 
-import com.ceos22.cgv_clone.domain.reservation.ReservationStatus;
+import com.ceos22.cgv_clone.domain.reservation.entity.ReservationStatus;
 import com.ceos22.cgv_clone.domain.reservation.repository.ReservationSeatRepository;
 import com.ceos22.cgv_clone.domain.theater.entity.Showtime;
 import com.ceos22.cgv_clone.domain.theater.repository.ShowtimeRepository;

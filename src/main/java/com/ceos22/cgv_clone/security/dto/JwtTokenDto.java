@@ -1,4 +1,4 @@
-package com.ceos22.cgv_clone.global.dto;
+package com.ceos22.cgv_clone.security.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -8,17 +8,16 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/theaters")
 @RequiredArgsConstructor
 public class TheaterController {
     private final TheaterService theaterService;
 
-    @GetMapping
+    @GetMapping("/theaters")
     public List<TheaterResponseDto> getAllTheaters(){
         return theaterService.getAllTheaters();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/theaters/{id}")
     public TheaterResponseDto getTheaterById(@PathVariable Long id){
         return theaterService.getTheaterById(id);
     }
