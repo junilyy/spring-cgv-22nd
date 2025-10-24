@@ -2,7 +2,75 @@
 CEOS 22기 백엔드 스터디 - CGV 클론 코딩 프로젝트
 
 ---
+## CGV Clone
 
+### ERD
+<img width="561" height="418" alt="Image" src="https://github.com/user-attachments/assets/60f501bf-ba70-4634-b41f-0d6c8d030143" />
+
+
+### 명세
+
+| 기능                   | Method | Endpoint | 인증 필요 |
+|----------------------|--------|----------|--------|
+| 영화 목록 조회             | `GET` | `/movies` | X |
+| 특정 영화 상세 조회          | `GET` | `/movies/{movieId}` | X |
+| 특정 영화가 상영하는 영화관 조회   | `GET` | `/movies/{movieId}/theaters` | X |
+| 특정 영화-영화관의 상영 시간표 조회 | `GET` | `/movies/{movieId}/theaters/{theaterId}/showtimes` | X |
+| 극장 목록 조회             | `GET` | `/theaters` | X |
+| 극장 상세 조회             | `GET` | `/theaters/{id}` | X |
+| 특정 상영 시간표 좌석 조회      | `GET` | `/showtimes/{showtimeId}/seats` | X |
+| 회원가입                 | `POST` | `/auth/signup` | X |
+| 로그인                  | `POST` | `/auth/login` | X |
+| 영화 찜 추가              | `POST` | `/favorites/movies/{movieId}` | O |
+| 영화 찜 취소              | `DELETE` | `/favorites/movies/{movieId}` | O |
+| 영화관 찜 추가             | `POST` | `/favorites/theaters/{theaterId}` | O |
+| 영화관 찜 취소             | `DELETE` | `/favorites/theaters/{theaterId}` | O |
+| 티켓 예매                | `POST` | `/tickets/reserve` | O |
+| 티켓 취소                | `DELETE` | `/tickets/cancel/{ticketId}` | O |
+| 주문 생성                | `POST` | `/orders` | O |
+| 주문 조회                | `GET` | `/orders/{orderId}` | O |
+
+### 예매
+
+- 예매 시 여러 좌석을 한 번에 예약할 수 있다.
+- 예매 후에 부분 취소는 불가하다.
+- 예매 취소 내역이 남지 않는다.
+- 좌석의 중복 예매는 불가능하다.
+
+- #### 예매 과정
+    1. 영화 선택
+
+       보고싶은 영화 선택(`/movies` or `/movies/{movieID}`)
+    2. 영화관 선택
+
+       선택한 영화를 상영하는 극장 조회 및 선택(`/movies/{movieId}/theaters`)
+    3. 상영 시간표 조회(`/movies/{movieId}/theaters/{theaterId}/showtimes`)
+    4. 좌석 조회
+
+       예매 가능한 좌석 조회(`/showtimes/{showtimeId}/seats`)
+    5. 좌석 예매
+
+       청소년/성인 인원 수, 좌석 선택 후 예매(`/tickets/reserve`)
+
+### 주문
+
+- 여러 상품을 한 번에 주문할 수 있다.
+- 주문 취소 기능은 제공하지 않는다.
+- 주문 시 해당 상품의 재고가 차감된다.
+- 재고가 부족하면 주문이 거절된다.
+- 총 결제 금액은 `상품 가격 × 수량`으로 계산된다.
+
+- #### 주문 과정
+    1. 상품 조회
+
+       극장 내 매점 상품 확인 (`/products`)
+    2. 주문 생성
+
+       특정 매점의 상품을 주문(`/orders`)
+    3. 주문 조회
+
+       생성된 주문 내역 확인(`/orders/{orderId}`)
+---
 ## 2주차 추가 조사
 
 1. data jpa를 찾다보면 SimpleJpaRepository에서  entity manager를 생성자 주입을 통해서 주입 받는다. 근데 싱글톤 객체는 한번만 할당을  받는데, 한번 연결 때 마다 생성이 되는 entity manager를 생성자 주입을 통해서 받는 것은 수상하지 않는가? 어떻게 되는 것일까? 한번 알아보자
@@ -166,71 +234,21 @@ AccessToken을 이용한 로그인 방식
   10. 자원 서버에 Access Token을 담아 데이터를 요청
   11. Access Token을 검증 후 응답
 ---
-## CGV Clone
+## 4주차
 
-### ERD
-<img width="561" height="418" alt="Image" src="https://github.com/user-attachments/assets/60f501bf-ba70-4634-b41f-0d6c8d030143" />
+### 동시성 해결 방법
 
+#### 1. synchronized
 
-### 명세
+#### 2. DB Lock
 
-| 기능                   | Method | Endpoint | 인증 필요 |
-|----------------------|--------|----------|--------|
-| 영화 목록 조회             | `GET` | `/movies` | X |
-| 특정 영화 상세 조회          | `GET` | `/movies/{movieId}` | X |
-| 특정 영화가 상영하는 영화관 조회   | `GET` | `/movies/{movieId}/theaters` | X |
-| 특정 영화-영화관의 상영 시간표 조회 | `GET` | `/movies/{movieId}/theaters/{theaterId}/showtimes` | X |
-| 극장 목록 조회             | `GET` | `/theaters` | X |
-| 극장 상세 조회             | `GET` | `/theaters/{id}` | X |
-| 특정 상영 시간표 좌석 조회      | `GET` | `/showtimes/{showtimeId}/seats` | X |
-| 회원가입                 | `POST` | `/auth/signup` | X |
-| 로그인                  | `POST` | `/auth/login` | X |
-| 영화 찜 추가              | `POST` | `/favorites/movies/{movieId}` | O |
-| 영화 찜 취소              | `DELETE` | `/favorites/movies/{movieId}` | O |
-| 영화관 찜 추가             | `POST` | `/favorites/theaters/{theaterId}` | O |
-| 영화관 찜 취소             | `DELETE` | `/favorites/theaters/{theaterId}` | O |
-| 티켓 예매                | `POST` | `/tickets/reserve` | O |
-| 티켓 취소                | `DELETE` | `/tickets/cancel/{ticketId}` | O |
-| 주문 생성                | `POST` | `/orders` | O |
-| 주문 조회                | `GET` | `/orders/{orderId}` | O |
+- Permission Lock
 
-### 예매
+- Optimistic Lock
 
-- 예매 시 여러 좌석을 한 번에 예약할 수 있다.
-- 예매 후에 부분 취소는 불가하다.
-- 예매 취소 내역이 남지 않는다.
-- 좌석의 중복 예매는 불가능하다.
+- Named Lock
 
-- #### 예매 과정
-  1. 영화 선택
-     
-     보고싶은 영화 선택(`/movies` or `/movies/{movieID}`)
-  2. 영화관 선택
-     
-     선택한 영화를 상영하는 극장 조회 및 선택(`/movies/{movieId}/theaters`)
-  3. 상영 시간표 조회(`/movies/{movieId}/theaters/{theaterId}/showtimes`)
-  4. 좌석 조회
-  
-     예매 가능한 좌석 조회(`/showtimes/{showtimeId}/seats`)
-  5. 좌석 예매
+#### 3. Redis
 
-     청소년/성인 인원 수, 좌석 선택 후 예매(`/tickets/reserve`)
-
-### 주문
-
-- 여러 상품을 한 번에 주문할 수 있다.
-- 주문 취소 기능은 제공하지 않는다.
-- 주문 시 해당 상품의 재고가 차감된다.
-- 재고가 부족하면 주문이 거절된다.
-- 총 결제 금액은 `상품 가격 × 수량`으로 계산된다.
-
-- #### 주문 과정
-    1. 상품 조회
-
-       극장 내 매점 상품 확인 (`/products`)
-    2. 주문 생성
-
-       특정 매점의 상품을 주문(`/orders`)
-    3. 주문 조회
-
-       생성된 주문 내역 확인(`/orders/{orderId}`)
+- (Spring) Lettuce
+- (Spring) Redisson

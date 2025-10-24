@@ -5,10 +5,12 @@ import com.ceos22.cgv_clone.domain.shop.dto.response.OrderResponseDto;
 import com.ceos22.cgv_clone.domain.shop.service.OrderService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @SecurityRequirement(name = "Bearer Authentication") // JWT 인증 필요
@@ -17,11 +19,15 @@ public class OrderController {
 
     @PostMapping("/orders")
     public OrderResponseDto createOrder(@AuthenticationPrincipal UserDetails userDetails, @RequestBody OrderRequestDto orderRequestDto) {
+        int itemCount = orderRequestDto.getItems() == null ? 0 : orderRequestDto.getItems().size();
+        log.info("[POST] /orders 요청 수신 - user={}, theaterId={}, items={}",
+                userDetails.getUsername(), orderRequestDto.getTheaterId(), itemCount);
         return orderService.createOrder(userDetails.getUsername(), orderRequestDto);
     }
 
     @GetMapping("/orders/{orderId}")
     public OrderResponseDto getOrder(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long orderId) {
+        log.info("[GET] /orders/{} 요청 수신 - user={}", orderId, userDetails.getUsername());
         return orderService.getOrder(userDetails.getUsername(), orderId);
     }
 }
