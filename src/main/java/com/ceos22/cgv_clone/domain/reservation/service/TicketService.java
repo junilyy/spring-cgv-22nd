@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.ceos22.cgv_clone.global.redis.RedissonLockHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,12 @@ public class TicketService {
     private final ShowtimeRepository showtimeRepository;
     private final UserRepository userRepository;
     private final ReservationSeatRepository reservationSeatRepository;
+    private final RedissonLockHelper lockHelper;
 
+    // 락 키 유틸
+    private String seatKey(Long showtimeId, String row, String col) {
+        return "seat:%d:%s-%s".formatted(showtimeId, row, col);
+    }
 
     // 예매
     @Transactional
@@ -44,57 +50,69 @@ public class TicketService {
             User user = userRepository.findByUsername(username)
                     .orElseThrow(() -> new IllegalArgumentException("유저 없음"));
 
-            // 최종 결제 금액 계산
+            // 최종 결제 금액 계산(!!!!!!계산 로직 분리하기!!!!!!!)
             int finalPrice = request.getGeneralCount() * TicketPrice.GENERAL.getPrice()
                     + request.getYouthCount() * TicketPrice.YOUTH.getPrice();
 
-            // 좌석 예매
-            List<ReservationSeat> reservedSeats = new ArrayList<>();
+            // 이번 예약의 좌석 키들을 수집
+            List<String> lockKeys = request.getSeatNumbers().stream()
+                    .map(seat -> {
+                        String row = seat.substring(0, 1);
+                        String col = seat.substring(1);
+                        return seatKey(request.getShowtimeId(), row, col);
+                    })
+                    .distinct()
+                    .toList();
 
-            for (String seatNumber : request.getSeatNumbers()) {
-                String row = seatNumber.substring(0, 1);
-                String col = seatNumber.substring(1);
+            // 잠금(lock) 실행
+            return lockHelper.withLocks(lockKeys, 2000, 5000, () -> {
+                // 좌석 예매
+                List<ReservationSeat> reservedSeats = new ArrayList<>();
 
-                boolean alreadyReserved = reservationSeatRepository
-                        .existsByShowtime_IdAndSeatRowAndSeatColAndStatus(request.getShowtimeId(), row, col, ReservationStatus.RESERVED);
+                for (String seatNumber : request.getSeatNumbers()) {
+                    String row = seatNumber.substring(0, 1);
+                    String col = seatNumber.substring(1);
 
-                if (alreadyReserved) {
-                    throw new IllegalStateException("이미 예약된 좌석입니다.");
+                    boolean alreadyReserved = reservationSeatRepository
+                            .existsByShowtime_IdAndSeatRowAndSeatColAndStatus(request.getShowtimeId(), row, col, ReservationStatus.RESERVED);
+
+                    if (alreadyReserved) {
+                        throw new IllegalStateException("이미 예약된 좌석입니다.");
+                    }
+
+                    ReservationSeat newReservation = ReservationSeat.builder()
+                            .showtime(showtime)
+                            .seatRow(row)
+                            .seatCol(col)
+                            .status(ReservationStatus.RESERVED)
+                            .build();
+
+                    reservedSeats.add(reservationSeatRepository.save(newReservation));
                 }
 
-                ReservationSeat newReservation = ReservationSeat.builder()
+                // Ticket 저장
+                Ticket ticket = Ticket.builder()
                         .showtime(showtime)
-                        .seatRow(row)
-                        .seatCol(col)
-                        .status(ReservationStatus.RESERVED)
+                        .user(user)
+                        .generalCnt(request.getGeneralCount())
+                        .youthCnt(request.getYouthCount())
+                        .finalPrice(finalPrice)
                         .build();
 
-                reservedSeats.add(reservationSeatRepository.save(newReservation));
-            }
+                Ticket savedTicket = ticketRepository.save(ticket);
 
-            // Ticket 저장
-            Ticket ticket = Ticket.builder()
-                    .showtime(showtime)
-                    .user(user)
-                    .generalCnt(request.getGeneralCount())
-                    .youthCnt(request.getYouthCount())
-                    .finalPrice(finalPrice)
-                    .build();
+                // 좌석에 티켓 연결
+                for (ReservationSeat rs : reservedSeats) {
+                    rs.setTicket(savedTicket);
+                }
 
-            Ticket savedTicket = ticketRepository.save(ticket);
+                List<String> rsSeats = reservedSeats.stream().map(rs -> rs.getSeatRow() + rs.getSeatCol()).toList();
 
-            // 좌석에 티켓 연결
-            for (ReservationSeat rs : reservedSeats) {
-                rs.setTicket(savedTicket);
-            }
+                log.info("[SVC] 예매 완료 - user={}, showtime={}, ticketId={}, seats={}, price={}",
+                        username, request.getShowtimeId(), savedTicket.getId(), rsSeats.size(), finalPrice);
 
-            List<String> rsSeats = reservedSeats.stream().map(rs -> rs.getSeatRow() + rs.getSeatCol()).toList();
-
-            log.info("[SVC] 예매 완료 - user={}, showtime={}, ticketId={}, seats={}, price={}",
-                    username, request.getShowtimeId(), savedTicket.getId(), rsSeats.size(), finalPrice);
-
-            return TicketResponseDto.fromEntity(savedTicket, rsSeats);
-
+                return TicketResponseDto.fromEntity(savedTicket, rsSeats);
+            });
         }
         catch (IllegalArgumentException e) {
             log.warn("[SVC] 잘못된 요청(예매) - user={}, showtime={}, msg={}",

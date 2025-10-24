@@ -9,6 +9,7 @@ import com.ceos22.cgv_clone.domain.theater.repository.ShowtimeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -38,6 +39,7 @@ public class MovieService {
     }
 
     // 영화 상세 조회
+    @Transactional
     public MovieResponseDto getMovieById(Long id) {
         log.debug("[SVC] getMovieById() start - id={}", id);
 

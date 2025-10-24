@@ -48,13 +48,4 @@ public class ReservationSeat extends BaseEntity {
         this.status = status;
     }
 
-    //예약 상태 변경을 위한 메서드
-    public void cancel(){
-        this.status = ReservationStatus.AVAILABLE;
-    }
-
-    public void reserve(){
-        this.status = ReservationStatus.RESERVED;
-    }
-
 }

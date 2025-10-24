@@ -14,6 +14,7 @@ import com.ceos22.cgv_clone.domain.shop.dto.request.OrderItemRequestDto;
 import com.ceos22.cgv_clone.domain.shop.dto.request.OrderRequestDto;
 import com.ceos22.cgv_clone.domain.shop.dto.response.OrderItemResponseDto;
 import com.ceos22.cgv_clone.domain.shop.dto.response.OrderResponseDto;
+import com.ceos22.cgv_clone.global.redis.RedissonLockHelper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,12 @@ public class OrderService {
     private final TheaterRepository theaterRepository;
     private final StockRepository stockRepository;
 
+    private final RedissonLockHelper lockHelper;
+
+    private String stockKey(Long theaterId, Long productId) {
+        return "snack:%d:%d".formatted(theaterId, productId);
+    }
+
     // 주문 생성
     @Transactional
     public OrderResponseDto createOrder(String username, OrderRequestDto request) {
@@ -47,48 +54,56 @@ public class OrderService {
             Theater theater = theaterRepository.findById(request.getTheaterId())
                     .orElseThrow(() -> new IllegalArgumentException("매점 없음"));
 
-            Order order = Order.builder()
-                    .user(user)
-                    .theater(theater)
-                    .totalPrice(0)
-                    .build();
-            ordersRepository.save(order);
+            // 이번 주문의 재고 키들을 수집
+            List<String> keys = request.getItems().stream()
+                    .map(i -> stockKey(request.getTheaterId(), i.getProductId()))
+                    .distinct()
+                    .toList();
 
-            int totalPrice = 0;
-            List<OrderItemResponseDto> itemDtos = new ArrayList<>();
+            // 잠금(lock) 실행
+            return lockHelper.withLocks(keys, 2000, 5000, () -> {
+                Order order = Order.builder()
+                        .user(user)
+                        .theater(theater)
+                        .totalPrice(0)
+                        .build();
+                ordersRepository.save(order);
 
-            for (OrderItemRequestDto item : request.getItems()) {
-                Stock stock = stockRepository
-                        .findByProduct_IdAndTheater_Id(item.getProductId(), request.getTheaterId())
-                        .orElseThrow(() -> new IllegalArgumentException("재고 없음"));
+                int totalPrice = 0;
+                List<OrderItemResponseDto> itemDtos = new ArrayList<>();
 
-                if (stock.getStock() < item.getQuantity()) {
-                    throw new IllegalStateException("재고 부족");
+                for (OrderItemRequestDto item : request.getItems()) {
+                    Stock stock = stockRepository
+                            .findByProduct_IdAndTheater_Id(item.getProductId(), request.getTheaterId())
+                            .orElseThrow(() -> new IllegalArgumentException("재고 없음"));
+
+                    if (stock.getStock() < item.getQuantity()) {
+                        throw new IllegalStateException("재고 부족");
+                    }
+
+                    // 재고 차감(차감 로직 분리할것!)
+                    stock.setStock(stock.getStock() - item.getQuantity());
+
+                    // 주문 상품 생성/저장
+                    OrderItem orderItem = OrderItem.builder()
+                            .order(order)
+                            .product(stock.getProduct())
+                            .quantity(item.getQuantity())
+                            .price(stock.getProduct().getPrice() * item.getQuantity())
+                            .build();
+                    orderItemRepository.save(orderItem);
+
+                    totalPrice += orderItem.getPrice();
+                    itemDtos.add(OrderItemResponseDto.fromEntity(orderItem));
                 }
 
-                // 재고 차감
-                stock.setStock(stock.getStock() - item.getQuantity());
+                order.setTotalPrice(totalPrice);
 
-                // 주문 상품 생성/저장
-                OrderItem orderItem = OrderItem.builder()
-                        .order(order)
-                        .product(stock.getProduct())
-                        .quantity(item.getQuantity())
-                        .price(stock.getProduct().getPrice() * item.getQuantity())
-                        .build();
-                orderItemRepository.save(orderItem);
+                log.info("[SVC] 주문 생성 완료 - user={}, orderId={}, theaterId={}, items={}, totalPrice={}",
+                        username, order.getId(), request.getTheaterId(), itemDtos.size(), totalPrice);
 
-                totalPrice += orderItem.getPrice();
-                itemDtos.add(OrderItemResponseDto.fromEntity(orderItem));
-            }
-
-            order.setTotalPrice(totalPrice);
-
-            log.info("[SVC] 주문 생성 완료 - user={}, orderId={}, theaterId={}, items={}, totalPrice={}",
-                    username, order.getId(), request.getTheaterId(), itemDtos.size(), totalPrice);
-
-            return OrderResponseDto.fromEntity(order, itemDtos);
-
+                return OrderResponseDto.fromEntity(order, itemDtos);
+            });
         }
         catch (IllegalArgumentException e) {
             log.warn("[SVC] 잘못된 요청(주문 생성) - user={}, theaterId={}, msg={}",
