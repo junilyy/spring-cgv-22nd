@@ -12,6 +12,11 @@ import com.ceos22.cgv_clone.domain.theater.entity.Showtime;
 import com.ceos22.cgv_clone.domain.user.repository.UserRepository;
 import com.ceos22.cgv_clone.domain.reservation.dto.request.TicketRequestDto;
 import com.ceos22.cgv_clone.domain.reservation.dto.response.TicketResponseDto;
+import com.ceos22.cgv_clone.external.payment.PaymentRecord;
+import com.ceos22.cgv_clone.external.payment.PaymentRecordRepository;
+import com.ceos22.cgv_clone.external.payment.PaymentService;
+import com.ceos22.cgv_clone.external.payment.PaymentStatus;
+import com.ceos22.cgv_clone.external.payment.PaymentTarget;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,10 +36,18 @@ public class TicketService {
     private final UserRepository userRepository;
     private final ReservationSeatRepository reservationSeatRepository;
     private final RedissonLockHelper lockHelper;
+    private final PaymentService paymentService;
+    private final PaymentRecordRepository paymentRecordRepository;
+
 
     // 락 키 유틸
     private String seatKey(Long showtimeId, String row, String col) {
         return "seat:%d:%s-%s".formatted(showtimeId, row, col);
+    }
+
+    // ticket prefix
+    private String paymentIdForTicket(Long ticketId) {
+        return "junilyy-tkt-" + ticketId;
     }
 
     // 예매
@@ -106,6 +119,18 @@ public class TicketService {
                     rs.setTicket(savedTicket);
                 }
 
+                String paymentId = "junilyy-tkx-" + savedTicket.getId(); // 네가 정한 규칙 그대로
+
+                // 결제 내역 레코드에 REQUESTED 상태로 저장
+                paymentRecordRepository.save(
+                        PaymentRecord.builder()
+                                .type(PaymentTarget.TICKET)
+                                .refId(savedTicket.getId())
+                                .paymentId(paymentId)
+                                .status(PaymentStatus.REQUESTED)
+                                .build()
+                );
+
                 List<String> rsSeats = reservedSeats.stream().map(rs -> rs.getSeatRow() + rs.getSeatCol()).toList();
 
                 log.info("[SVC] 예매 완료 - user={}, showtime={}, ticketId={}, seats={}, price={}",
@@ -130,38 +155,96 @@ public class TicketService {
         }
     }
 
-    // 예매 취소
     @Transactional
     public void cancelTicket(String username, Long ticketId) {
-        log.debug("[SVC] cancelTicket start - user={}, ticketId={}", username, ticketId);
+        // 1) 권한 확인
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new IllegalArgumentException("티켓 없음"));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("유저 없음"));
+        if (!ticket.getUser().getId().equals(user.getId())) {
+            throw new SecurityException("본인이 예매한 티켓만 취소할 수 있습니다.");
+        }
 
-        try {
-            Ticket ticket = ticketRepository.findById(ticketId)
-                    .orElseThrow(() -> new IllegalArgumentException("티켓 없음"));
-            User user = userRepository.findByUsername(username)
-                    .orElseThrow(() -> new IllegalArgumentException("유저 없음"));
+        // 2) 최신 결제 레코드 조회
+        PaymentRecord pr = paymentRecordRepository
+                .findTopByTypeAndRefIdOrderByIdDesc(PaymentTarget.TICKET, ticketId)
+                .orElse(null);
 
-            if (!ticket.getUser().getId().equals(user.getId())) {
-                throw new SecurityException("본인이 예매한 티켓만 취소할 수 있습니다.");
+        String paymentId = "junilyy-tkt-" + ticketId;
+
+        // 3) 상태별 처리
+        if (pr != null) {
+            switch (pr.getStatus()) {
+                case PAID -> {
+                    // PG 결제 취소 호출
+                    try {
+                        paymentService.cancel(paymentId);
+                        pr.setStatus(PaymentStatus.CANCELLED);
+                        log.info("[SVC] 결제 취소 성공 - ticketId={}, paymentId={}", ticketId, paymentId);
+                    } catch (Exception e) {
+                        log.warn("[SVC] 결제 취소 실패 - ticketId={}, msg={}", ticketId, e.getMessage());
+                        throw e;
+                    }
+                }
+                case CANCELLED -> {
+                    // 이미 취소됨 -> 좌석/티켓만 정리
+                    log.info("[SVC] 이미 결제 취소된 티켓 - ticketId={}", ticketId);
+                }
+                case REQUESTED -> {
+                    // 결제 미완료 -> 제거
+                    paymentRecordRepository.delete(pr);
+                    log.info("[SVC] 결제 대기(REQUESTED) 티켓 취소 - ticketId={}, paymentId={}", ticketId, pr.getPaymentId());
+                }
             }
-
-            // 좌석 해제(삭제) → 티켓 삭제
-            reservationSeatRepository.deleteByTicket_Id(ticket.getId());
-            ticketRepository.delete(ticket);
-
-            log.info("[SVC] 예매 취소 완료 - user={}, ticketId={}", username, ticketId);
-
+        } else {
+            log.info("[SVC] 결제 레코드 없음 - ticketId={}", ticketId);
         }
-        catch (IllegalArgumentException e) {
-            log.warn("[SVC] 잘못된 요청(취소) - user={}, ticketId={}, msg={}", username, ticketId, e.getMessage());
-            throw e;
-        }
-        catch (SecurityException e) {
-            log.warn("[SVC] 권한 없는 취소 시도 - user={}, ticketId={}, msg={}", username, ticketId, e.getMessage());
-            throw e;
-        }
-        catch (Exception e) {
-            log.error("[SVC] 예매 취소 실패 - user={}, ticketId={}", username, ticketId, e);
+
+        // 4) 좌석/티켓 정리
+        reservationSeatRepository.deleteByTicket_Id(ticketId);
+        ticketRepository.delete(ticket);
+
+        log.info("[SVC] 티켓 취소 완료 - user={}, ticketId={}", username, ticketId);
+    }
+
+    @Transactional
+    public void payForTicket(Long ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new IllegalArgumentException("티켓 없음"));
+
+        String paymentId = paymentIdForTicket(ticket.getId());
+        String orderName = "CGV-Ticket-" + ticket.getId();
+        String custom = "{\"ticketId\":\"" + ticket.getId() + "\"}";
+
+        // PaymentRecord가 없다면 REQUESTED로 생성, 있다면 그대로 사용(결제 실패 시 다시 사용하기 위함)
+        paymentRecordRepository.findTopByTypeAndRefIdOrderByIdDesc(PaymentTarget.TICKET, ticketId)
+                .or(() -> paymentRecordRepository.findByPaymentId(paymentId))
+                .or(() -> {
+                    PaymentRecord created = paymentRecordRepository.save(
+                            PaymentRecord.builder()
+                                    .type(PaymentTarget.TICKET)
+                                    .refId(ticketId)
+                                    .paymentId(paymentId)
+                                    .status(PaymentStatus.REQUESTED)
+                                    .build()
+                    );
+                    return java.util.Optional.of(created);
+                });
+
+        // 실제 결제 호출
+        try {
+            paymentService.pay(paymentId, orderName, ticket.getFinalPrice(), custom);
+
+            // 성공 -> PaymentRecord를 PAID로 변경
+            paymentRecordRepository.findByPaymentId(paymentId)
+                    .ifPresent(r -> r.setStatus(PaymentStatus.PAID));
+
+            log.info("[SVC] 결제 성공 - ticketId={}, paymentId={}", ticketId, paymentId);
+        } catch (Exception e) {
+            // 실패 시 상태는 그대로 REQUESTED
+            // 좌석은 스케줄러가 1분 뒤 반납할 수 있도록 유지
+            log.warn("[SVC] 결제 실패 - ticketId={}, paymentId={}, msg={}", ticketId, paymentId, e.getMessage());
             throw e;
         }
     }

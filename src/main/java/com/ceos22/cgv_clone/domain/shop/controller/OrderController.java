@@ -30,4 +30,16 @@ public class OrderController {
         log.info("[GET] /orders/{} 요청 수신 - user={}", orderId, userDetails.getUsername());
         return orderService.getOrder(userDetails.getUsername(), orderId);
     }
+
+    @DeleteMapping("/orders/cancel/{orderId}")
+    public String cancelOrder(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long orderId) {
+        orderService.cancelOrder(userDetails.getUsername(), orderId);
+        return "주문이 취소되었습니다.";
+    }
+
+    @PostMapping("/orders/{orderId}/pay")
+    public String payOrder(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long orderId) {
+        orderService.payForOrder(userDetails.getUsername(), orderId);
+        return "주문 결제가 완료되었습니다.";
+    }
 }

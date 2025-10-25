@@ -33,4 +33,11 @@ public class TicketController {
         ticketService.cancelTicket(userDetails.getUsername(), ticketId);
         return "예매가 취소되었습니다.";
     }
+
+    // 예매한 티켓 결제
+    @PostMapping("/tickets/{ticketId}/pay")
+    public String pay(@PathVariable Long ticketId) {
+        ticketService.payForTicket(ticketId);
+        return "결제가 완료되었습니다.";
+    }
 }
