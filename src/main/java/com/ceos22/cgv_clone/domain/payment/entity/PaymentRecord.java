@@ -1,5 +1,5 @@
 // src/main/java/com/ceos22/cgv_clone/external/payment/PaymentRecord.java
-package com.ceos22.cgv_clone.external.payment;
+package com.ceos22.cgv_clone.domain.payment.entity;
 
 import com.ceos22.cgv_clone.domain.common.entity.BaseEntity;
 import jakarta.persistence.*;

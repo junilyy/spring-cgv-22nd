@@ -1,8 +1,11 @@
 package com.ceos22.cgv_clone.domain.reservation.service;
 
+import com.ceos22.cgv_clone.domain.payment.PaymentRecordRepository;
 import com.ceos22.cgv_clone.domain.reservation.repository.ReservationSeatRepository;
 import com.ceos22.cgv_clone.domain.reservation.repository.TicketRepository;
-import com.ceos22.cgv_clone.external.payment.*;
+import com.ceos22.cgv_clone.domain.payment.entity.PaymentRecord;
+import com.ceos22.cgv_clone.domain.payment.entity.PaymentStatus;
+import com.ceos22.cgv_clone.domain.payment.entity.PaymentTarget;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;

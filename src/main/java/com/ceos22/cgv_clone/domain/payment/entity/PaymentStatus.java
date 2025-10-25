@@ -1,4 +1,4 @@
-package com.ceos22.cgv_clone.external.payment;
+package com.ceos22.cgv_clone.domain.payment.entity;
 
 public enum PaymentStatus {
     REQUESTED,

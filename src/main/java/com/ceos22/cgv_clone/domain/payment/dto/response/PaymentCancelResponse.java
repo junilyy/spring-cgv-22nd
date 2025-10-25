@@ -1,4 +1,4 @@
-package com.ceos22.cgv_clone.external.payment.dto;
+package com.ceos22.cgv_clone.domain.payment.dto.response;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,5 +1,6 @@
 package com.ceos22.cgv_clone.domain.shop.service;
 
+import com.ceos22.cgv_clone.domain.payment.PaymentRecordRepository;
 import com.ceos22.cgv_clone.domain.shop.repository.OrderItemRepository;
 import com.ceos22.cgv_clone.domain.shop.repository.OrderRepository;
 import com.ceos22.cgv_clone.domain.shop.repository.ProductRepository;
@@ -15,7 +16,10 @@ import com.ceos22.cgv_clone.domain.shop.dto.request.OrderItemRequestDto;
 import com.ceos22.cgv_clone.domain.shop.dto.request.OrderRequestDto;
 import com.ceos22.cgv_clone.domain.shop.dto.response.OrderItemResponseDto;
 import com.ceos22.cgv_clone.domain.shop.dto.response.OrderResponseDto;
-import com.ceos22.cgv_clone.external.payment.*;
+import com.ceos22.cgv_clone.domain.payment.entity.PaymentRecord;
+import com.ceos22.cgv_clone.domain.payment.entity.PaymentStatus;
+import com.ceos22.cgv_clone.domain.payment.entity.PaymentTarget;
+import com.ceos22.cgv_clone.domain.payment.service.PaymentService;
 import com.ceos22.cgv_clone.global.redis.RedissonLockHelper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

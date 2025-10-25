@@ -1,6 +1,8 @@
-package com.ceos22.cgv_clone.external.payment;
+package com.ceos22.cgv_clone.domain.payment.service;
 
-import com.ceos22.cgv_clone.external.payment.dto.*;
+import com.ceos22.cgv_clone.domain.payment.dto.request.PaymentRequest;
+import com.ceos22.cgv_clone.domain.payment.dto.response.PaymentCancelResponse;
+import com.ceos22.cgv_clone.domain.payment.dto.response.PaymentResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
