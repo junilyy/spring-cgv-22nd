@@ -119,7 +119,7 @@ public class TicketService {
                     rs.setTicket(savedTicket);
                 }
 
-                String paymentId = "junilyy-tkx-" + savedTicket.getId(); // 네가 정한 규칙 그대로
+                String paymentId = "junilyy-tkt-" + savedTicket.getId();
 
                 // 결제 내역 레코드에 REQUESTED 상태로 저장
                 paymentRecordRepository.save(
