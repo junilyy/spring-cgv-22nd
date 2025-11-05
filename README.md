@@ -810,3 +810,11 @@ ENTRYPOINT ["java", "-jar", "app.jar"]
 | **Rolling** | 거의 없음 | 보통 | 중간 | 순차적 교체 |
 | **Blue/Green** | 없음 | 높음 | 빠름 | 두 환경 간 완전 전환 |
 | **Canary** | 없음 | 보통 | 빠름 | 트래픽 비율로 점진 배포 |
+
+----
+## 6주차 내용 정리
+
+### CGV 서비스 아키텍쳐 구조도
+
+<img width="840" height="368" alt="Image" src="https://github.com/user-attachments/assets/117b6d1a-35a6-4913-9abf-1c34a2ef592c" />
+
