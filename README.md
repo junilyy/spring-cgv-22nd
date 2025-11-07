@@ -810,3 +810,72 @@ ENTRYPOINT ["java", "-jar", "app.jar"]
 | **Rolling** | 거의 없음 | 보통 | 중간 | 순차적 교체 |
 | **Blue/Green** | 없음 | 높음 | 빠름 | 두 환경 간 완전 전환 |
 | **Canary** | 없음 | 보통 | 빠름 | 트래픽 비율로 점진 배포 |
+
+----
+## 6주차 내용 정리
+
+### CGV 서비스 아키텍쳐 구조도
+
+<img width="840" height="368" alt="Image" src="https://github.com/user-attachments/assets/117b6d1a-35a6-4913-9abf-1c34a2ef592c" />
+
+### 부하테스트(티켓 예매-결제 과정)
+
+- 문제 상황 해결
+    1. nginx connection
+  
+        <img width="985" height="361" alt="Image" src="https://github.com/user-attachments/assets/8bf9a888-29e6-48fc-aae5-14c4e9f91689" />
+        
+        Throughput이 0까지 떨어지는 문제 발생
+  
+        단순 병목(lock 등)으로 인한 문제는 아니라고 판단.
+       
+        -> 원인은 nginx connection 문제
+  
+        -> request 시 tcp 커넥션을 매번 새로 생성하는 과정에서 지연이 발생
+  
+        -> 이를 keepalive로 해결(tcp connection을 유지하고 재사용)
+
+    2. 정적 팩토리 메서드 내 builder 패턴 사용
+  
+       <img width="728" height="436" alt="Image" src="https://github.com/user-attachments/assets/33c205ac-aa5f-470c-a7e7-a48426ac4d12" />
+    
+       <img width="641" height="184" alt="Image" src="https://github.com/user-attachments/assets/6230e2ed-d582-4a47-9597-0dc46543fc55" />
+       
+       HTTP Request failed가 100%고 post 요청이 실패하는 문제 발생
+        
+        -> 원인은 리팩토링 과정에서 사용한 정적 팩토리 메서드 내의 builder..(멍청 이슈..)
+       
+        -> 정적 팩토리 메서드 호출 -> builder -> builder 내에서 다시 정적 팩토리 메소드 호출 -> builder처럼 재귀 발생..
+
+
+- 테스트 결과
+
+    <img width="1482" height="714" alt="Image" src="https://github.com/user-attachments/assets/a8dcfbd2-55b5-4b61-b392-36c82a01c12e" />
+    
+    <img width="981" height="436" alt="Image" src="https://github.com/user-attachments/assets/35f676f5-e980-4a6c-a443-b1eddf44752f" />
+    
+    Throughput이 떨어지는 원인:
+    
+    <img width="843" height="184" alt="Image" src="https://github.com/user-attachments/assets/c0675234-60c2-4c53-a2e6-f3a7f8cce2ab" />
+    
+    <img width="831" height="187" alt="Image" src="https://github.com/user-attachments/assets/29bcb9dc-229a-4526-85c9-6dd6e16d5854" />
+    
+    application과 DB 병목이 원인이다! (그래프 모양이 이쁘지 않아서 제가 테스트를 제대로 했는지 의문이 드네요ㅠ)
+
+
+* 로컬에서 시도하면 어떨까..??
+
+    <img width="1480" height="780" alt="Image" src="https://github.com/user-attachments/assets/120ada17-ee0c-4c59-891d-04ff3eae8cf2" />
+    
+    <img width="980" height="701" alt="Image" src="https://github.com/user-attachments/assets/cef6b08b-f83e-443d-8050-c5729efb05b1" />
+    
+    Throughput이 떨어지긴 하지만, 서버와 달리 급격하게 떨어지는 모습은 보이지 않는다.
+    
+    원인: 서버와 달리 local은 nginx를 통하지 않아서 그런 것으로 추정.
+    
+    (그 외 cpu 환경의 차이도 있겠지만 가장 큰 원인은 이거 아닐까요..? 의견 남겨주시면 감사하겠습니다!)
+
+
+구체적인 분석을 위해 예매 단계, 결제 단계의 부하를 각각 테스트 해보고 싶었으나, 결제를 위해서는 예매 단계에서의 payment record가 필요!
+
+로직 분리를 시도하기 힘들어서 따로 테스트는 못해봤습니다.
