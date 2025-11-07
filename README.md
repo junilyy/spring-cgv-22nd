@@ -862,7 +862,8 @@ ENTRYPOINT ["java", "-jar", "app.jar"]
     
     application과 DB 병목이 원인이다! (그래프 모양이 이쁘지 않아서 제가 테스트를 제대로 했는지 의문이 드네요ㅠ)
 
-
+    RedissonLockHelper로 인한 다중 락 경합, @Transactional 범위가 커서 락 + DB I/O가 오래 유지된다는 점 등이 원인이라고 추정됩니다.
+    
 * 로컬에서 시도하면 어떨까..??
 
     <img width="1480" height="780" alt="Image" src="https://github.com/user-attachments/assets/120ada17-ee0c-4c59-891d-04ff3eae8cf2" />
